@@ -67,6 +67,52 @@ describe('testing module auth-router', function(){
       .catch(done);
     });
   });
+  describe('testing POST /api/signup', function(){
+
+    after((done) => { // remove user created for POST test
+      debug('after POST /api/signup');
+      userController.removeAllUsers()
+      .then(() => done())
+      .catch(done);
+    });
+
+    it('should return status 200 and a token', function(done){
+      debug('test POST /api/signup');
+      request.post(`${baseURL}/signup`)
+      .send({
+        username: 'cort',
+        password: 'asdf1234'
+      })
+      .then(res => {
+        expect(res.status).to.equal(200);
+        expect(res.text.length).to.equal(205);
+        done();
+      })
+      .catch(done);
+    });
+
+    it('should return status 400 for no body', function(done){
+      debug('test POST status 400 no body /api/signup');
+      request.post(`${baseURL}/signup`)
+      .send({})
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        done();
+      });
+    });
+
+    it('should return status 400 for invalid body', function(done){
+      debug('test POST status 400 invalid body /api/signup');
+      request.post(`${baseURL}/signup`)
+      .send({
+        fudge: 'muffins'
+      })
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        done();
+      });
+    });
+  });
 
   describe('testing GET /api/signin', function(){
     before((done) => {
@@ -91,6 +137,15 @@ describe('testing module auth-router', function(){
         done();
       })
       .catch(done);
+    });
+    it('should return status 401 wrong credentials', function(done){
+      debug('test GET status 401');
+      request.get(`${baseURL}/signin`)
+      .auth('cort', 'wrongpassword')
+      .end((err, res) => {
+        expect(res.status).to.equal(401);
+        done();
+      });
     });
   });
 });

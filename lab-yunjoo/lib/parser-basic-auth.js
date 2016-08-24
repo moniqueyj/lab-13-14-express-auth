@@ -20,5 +20,8 @@ module.exports = function(req, res, next){
     return next(httpErrors(401,'no username provided'));
   if(!req.auth.password)
     return next(httpErrors(401, 'no password provided'));
+  if (!req.auth.username && !req.auth.password){
+    return next(httpErrors(400, 'both user and password were not provided'));
+  }
   next();
 };

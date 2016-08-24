@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const mongoose = require('mongoose');
 const httpErrors = require('http-errors');
 const debug = require('debug')('authdemo:user');
+const jwt = require('jsonwebtoken');
 
 const userSchema = mongoose.Schema({
   username: {type: String, requried: true, unique: true},
@@ -15,8 +16,9 @@ const userSchema = mongoose.Schema({
 
 userSchema.methods.generateHash = function(password){
   debug('generateHash');
-  return new Promise((resolve) =>{
-    bcrypt.has(password, 8, (err,hash) => {
+  return new Promise((resolve,reject) =>{
+    bcrypt.hash(password, 8, (err,hash) => {
+      if (err) return reject(httpErrors(400, err.message));
       this.password = hash;
       resolve(this);
     });
@@ -52,6 +54,14 @@ userSchema.methods.generateFindHash = function(){
         _generateFindHash.call(this);
       });
     }
+  });
+};
+userSchema.methods.generateToken = function(){
+  debug('generateToken');
+  return new Promise((resolve, reject) => {
+    this.generateFindHash()
+    .then( findHash => resolve(jwt.sign({token: findHash}, process.env.APP_SECRET)))
+    .catch(reject);
   });
 };
 
