@@ -7,7 +7,7 @@ const jsonParser = require('body-parser').json();
 const parseBasicAuth = require('../lib/parser-basic-auth');
 
 //app modules
-const authController = require('../constroller/auth-controller');
+const authController = require('../controller/auth-controller');
 
 //module constants
 const authRouter = module.exports = new Router();

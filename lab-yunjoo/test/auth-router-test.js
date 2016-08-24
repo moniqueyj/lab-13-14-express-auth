@@ -80,8 +80,8 @@ describe('testing module auth-router', function(){
       debug('test POST /api/signup');
       request.post(`${baseURL}/signup`)
       .send({
-        username: 'cort',
-        password: 'asdf1234'
+        username: 'yunjoo',
+        password: '1stwinner'
       })
       .then(res => {
         expect(res.status).to.equal(200);
@@ -141,7 +141,7 @@ describe('testing module auth-router', function(){
     it('should return status 401 wrong credentials', function(done){
       debug('test GET status 401');
       request.get(`${baseURL}/signin`)
-      .auth('cort', 'wrongpassword')
+      .auth('yunjoo', 'wrongpassword')
       .end((err, res) => {
         expect(res.status).to.equal(401);
         done();

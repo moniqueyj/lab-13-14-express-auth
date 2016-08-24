@@ -13,16 +13,20 @@
     "body-parser": "^1.15.1",
     "debug": "^2.2.0",
     "express": "^4.13.4",
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^3.0.1",
+    "gulp-mocha": "^3.0.1",
+    "gulp-nodemon": "^2.1.0",
     "http-errors": "^1.5.0",
     "jsonwebtoken": "^7.0.0",
     "mongoose": "^4.5.0",
     "morgan": "^1.7.0"
   },
   "dependencies": {
+    "bluebird": "^3.4.2",
     "chai": "^3.5.0",
     "mocha": "^2.5.3",
     "superagent-promise-plugin": "^3.2.0",
     "superagent-use": "0.0.1"
-    }
   }
 }

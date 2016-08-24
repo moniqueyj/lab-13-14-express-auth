@@ -6,12 +6,14 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const httpErrors = require('http-errors');
 const debug = require('debug')('authdemo:server');
+const Promise = require('bluebird');
+Promise.promisifyAll(mongoose);
 
 //app modules
 const handleError = require('./lib/handle-error');
-const parserBearerAuth = require('./lib/parse-bearer-auth');
+const parserBearerAuth = require('./lib/parser-bearer-auth');
 const authRouter = require('./route/auth-router');
-const snackRouter = require('./route/snack-router');
+// const snackRouter = require('./route/snack-router');
 
 //constant module variables
 const app = express();
@@ -23,22 +25,22 @@ mongoose.connect(mongoURI);
 
 //setup middleware
 app.use(morgan('dev'));
-
-//setup routes
-app.all('./', parserBearerAuth, function(req, res){
-  console.log('req.userId', req.userId);
-  res.send('booya');
-});
+app.use(handleError);
 
 app.use('/api',authRouter);
-app.use('/api', snackRouter);
+// app.use('/api', snackRouter);
+
+app.all('./', parserBearerAuth, function(req, res){
+  console.log('req.userId', req.userId);
+  res.send('hooray');
+});
+
 
 app.all('*', function(req, res, next){
   debug('404 * route');
   next(httpErrors(404, 'no such route'));
 });
 
-app.use(handleError);
 
 //start server
 const server = app.listen(port, function(){

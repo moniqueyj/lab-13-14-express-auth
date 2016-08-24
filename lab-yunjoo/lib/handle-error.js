@@ -3,28 +3,17 @@
 const debug = require('debug')('authdemo:handle-errors');
 const httpErrors = require('http-errors');
 
-module.exports = function(req, res, next){
-  debug('errorstatus');
-  if (!req.headers.authorization){
-    return next(httpErrors(401, 'requires authorization header'));
+module.exports = function(err, req, res, next){
+  console.error(err.message);
+  if(err.status && err.name){
+    debug('http-errors');
+    res.status(err.status).send(err.name);
+    next();
+    return;
   }
-  var authHeader = req.headers.authorization;
-  var namePassword = authHeader.split(' ')[1];
-  namePassword = new Buffer(namePassword, 'base64').toString('utf8');
-  namePassword = namePassword.split(':');
-  req.auth = {
-    username: namePassword[0],
-    password: namePassword[1]
-  };
 
-  if (!req.auth.username){
-    return next(httpErrors(401, 'no username provided'));
-  }
-  if (!req.auth.password){
-    return next(httpErrors(401, 'no password provided'));
-  }
-  if (!req.auth.username && !req.auth.password){
-    return next(httpErrors(400, 'both user and password were not provided'));
-  }
-  next();
+
+  debug('server error');
+  err = httpErrors(500, err.message);
+  res.status(err.status).send(err.name);
 };
